@@ -14,7 +14,7 @@ export default function NewPostPage() {
   const router = useRouter()
   const queryClient = useQueryClient()
 
-  const { register, handleSubmit, formState: { errors }, watch } = useForm<CreatePostDto>()
+  const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm<CreatePostDto>()
 
   const createMutation = useMutation(postApi.create, {
     onSuccess: () => {
@@ -65,6 +65,7 @@ export default function NewPostPage() {
             onSubmit={onSubmit}
             errors={errors}
             watch={watch}
+            setValue={setValue}
             isLoading={createMutation.isLoading}
             submitLabel="Create Post"
           />

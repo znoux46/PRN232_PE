@@ -45,56 +45,83 @@ export default function PostCard({ post, index = 0 }: PostCardProps) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.1 }}
-      className="card card-hover overflow-hidden group"
+      transition={{ duration: 0.3, delay: index * 0.05 }}
+      className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
     >
-      {post.imageUrl && (
-        <div className="relative w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
-          <Image
-            src={post.imageUrl}
-            alt={post.name}
-            fill
-            className="object-cover group-hover:scale-110 transition-transform duration-500"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none'
-            }}
-          />
-        </div>
-      )}
-      <div className="p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-primary-600 transition-colors">
-          {post.name}
-        </h2>
-        <p className="text-gray-600 text-sm mb-4 line-clamp-3 leading-relaxed">
-          {post.description}
-        </p>
-        <div className="flex items-center gap-2 text-xs text-gray-500 mb-4">
-          <Calendar className="h-4 w-4" />
-          <span>Created: {formatDate(post.createdAt)}</span>
-        </div>
-        <div className="flex gap-2">
-          <Link
-            href={`/posts/${post.id}`}
-            className="flex-1 text-center btn-primary flex items-center justify-center gap-2 py-2 px-4 text-sm"
-          >
-            <Eye className="h-4 w-4" />
-            View
-          </Link>
-          <Link
-            href={`/posts/${post.id}/edit`}
-            className="flex-1 text-center btn-secondary flex items-center justify-center gap-2 py-2 px-4 text-sm"
-          >
-            <Edit className="h-4 w-4" />
-            Edit
-          </Link>
-          <button
-            onClick={handleDelete}
-            disabled={deleteMutation.isLoading}
-            className="btn-danger flex items-center justify-center gap-2 py-2 px-4 text-sm"
-          >
-            <Trash2 className="h-4 w-4" />
-            {deleteMutation.isLoading ? '...' : 'Delete'}
-          </button>
+      <div className="p-4">
+        <div className="flex gap-3">
+          {/* Avatar placeholder */}
+          <div className="flex-shrink-0">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-semibold text-lg">
+              {post.name.charAt(0).toUpperCase()}
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 min-w-0">
+            {/* Header */}
+            <div className="flex items-center gap-2 mb-1">
+              <h2 className="font-bold text-gray-900 hover:underline cursor-pointer">
+                {post.name}
+              </h2>
+              <span className="text-gray-500 text-sm">·</span>
+              <span className="text-gray-500 text-sm">{formatDate(post.createdAt)}</span>
+            </div>
+
+            {/* Description */}
+            <p className="text-gray-900 mb-3 leading-relaxed whitespace-pre-wrap break-words">
+              {post.description}
+            </p>
+
+            {/* Image */}
+            {post.imageUrl && (
+              <div className="relative w-full rounded-2xl overflow-hidden mb-3 border border-gray-200">
+                <div className="relative w-full aspect-video bg-gradient-to-br from-gray-100 to-gray-200">
+                  <Image
+                    src={post.imageUrl}
+                    alt={post.name}
+                    fill
+                    className="object-cover"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none'
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Actions */}
+            <div className="flex items-center gap-6 mt-2">
+              <Link
+                href={`/posts/${post.id}`}
+                className="flex items-center gap-2 text-gray-500 hover:text-primary-600 transition-colors group"
+              >
+                <div className="p-2 rounded-full group-hover:bg-primary-50 transition-colors">
+                  <Eye className="h-4 w-4" />
+                </div>
+                <span className="text-sm">View</span>
+              </Link>
+              <Link
+                href={`/posts/${post.id}/edit`}
+                className="flex items-center gap-2 text-gray-500 hover:text-primary-600 transition-colors group"
+              >
+                <div className="p-2 rounded-full group-hover:bg-primary-50 transition-colors">
+                  <Edit className="h-4 w-4" />
+                </div>
+                <span className="text-sm">Edit</span>
+              </Link>
+              <button
+                onClick={handleDelete}
+                disabled={deleteMutation.isLoading}
+                className="flex items-center gap-2 text-gray-500 hover:text-red-600 transition-colors group"
+              >
+                <div className="p-2 rounded-full group-hover:bg-red-50 transition-colors">
+                  <Trash2 className="h-4 w-4" />
+                </div>
+                <span className="text-sm">{deleteMutation.isLoading ? 'Deleting...' : 'Delete'}</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </motion.div>

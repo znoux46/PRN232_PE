@@ -22,7 +22,7 @@ export default function EditPostPage() {
     { enabled: !!id }
   )
 
-  const { register, handleSubmit, formState: { errors }, watch, reset } = useForm<UpdatePostDto>({
+  const { register, handleSubmit, formState: { errors }, watch, setValue, reset } = useForm<UpdatePostDto>({
     defaultValues: post,
   })
 
@@ -124,6 +124,7 @@ export default function EditPostPage() {
             onSubmit={onSubmit}
             errors={errors}
             watch={watch}
+            setValue={setValue}
             isLoading={updateMutation.isLoading}
             submitLabel="Update Post"
           />

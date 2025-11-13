@@ -9,7 +9,14 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: ConnectionStrings__DefaultConnection
-        sync: false  # Will be set manually in Render dashboard
+        sync: false  # Set manually in Render dashboard with NeonDB connection string
       - key: Cors__AllowedOrigins__0
-        sync: false  # Will be set manually after frontend deploy
+        sync: false  # Set manually after frontend deploy (e.g., https://your-frontend.vercel.app)
+      - key: Cloudinary__CloudName
+        sync: false  # Set manually in Render dashboard with your Cloudinary cloud name
+      - key: Cloudinary__ApiKey
+        sync: false  # Set manually in Render dashboard with your Cloudinary API key
+      - key: Cloudinary__ApiSecret
+        sync: false  # Set manually in Render dashboard with your Cloudinary API secret
+
 

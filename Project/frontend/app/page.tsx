@@ -1,39 +1,51 @@
 'use client'
 
-import { useState } from 'react'
-import { useQuery } from 'react-query'
+import { useState, useMemo } from 'react'
+import { useInfiniteQuery } from 'react-query'
 import { postApi, PostQuery } from '@/lib/api'
 import PostList from '@/components/PostList'
-import SearchBar from '@/components/SearchBar'
-import SortDropdown from '@/components/SortDropdown'
+import FilterBar from '@/components/FilterBar'
 import Link from 'next/link'
 import { Plus, FileText, Loader2, AlertCircle, RefreshCw } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 export default function Home() {
-  const [query, setQuery] = useState<PostQuery>({
-    page: 1,
-    pageSize: 10,
-    sortBy: 'name',
-    sortOrder: 'asc',
+  const [baseQuery, setBaseQuery] = useState<Omit<PostQuery, 'page' | 'pageSize'>>({
+    sortBy: 'createdAt',
+    sortOrder: 'desc',
   })
 
-  const { data, isLoading, error, refetch } = useQuery(
-    ['posts', query],
-    () => postApi.getAll(query),
-    { keepPreviousData: true }
+  const { data, isLoading, error, refetch, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery(
+    ['posts', baseQuery],
+    ({ pageParam = 1 }) => postApi.getAll({
+      ...baseQuery,
+      page: pageParam,
+      pageSize: 6,
+    }),
+    {
+      getNextPageParam: (lastPage) => {
+        return lastPage.hasNextPage ? lastPage.page + 1 : undefined
+      },
+      keepPreviousData: true,
+    }
   )
 
+  const allPosts = useMemo(() => {
+    return data?.pages.flatMap(page => page.items) ?? []
+  }, [data])
+
   const handleSearch = (search: string) => {
-    setQuery(prev => ({ ...prev, search, page: 1 }))
+    setBaseQuery(prev => ({ ...prev, search: search || undefined }))
   }
 
-  const handleSort = (sortBy: string, sortOrder: 'asc' | 'desc') => {
-    setQuery(prev => ({ ...prev, sortBy, sortOrder, page: 1 }))
+  const handleSortChange = (sortBy: string, sortOrder: 'asc' | 'desc') => {
+    setBaseQuery(prev => ({ ...prev, sortBy, sortOrder }))
   }
 
-  const handlePageChange = (page: number) => {
-    setQuery(prev => ({ ...prev, page }))
+  const handleLoadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage()
+    }
   }
 
   return (
@@ -62,20 +74,14 @@ export default function Home() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="card p-6 mb-6"
+          className="mb-6"
         >
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1">
-              <SearchBar onSearch={handleSearch} />
-            </div>
-            <div className="w-full sm:w-64">
-              <SortDropdown
-                sortBy={query.sortBy || 'name'}
-                sortOrder={query.sortOrder || 'asc'}
-                onSort={handleSort}
-              />
-            </div>
-          </div>
+          <FilterBar
+            sortBy={baseQuery.sortBy || 'createdAt'}
+            sortOrder={baseQuery.sortOrder || 'desc'}
+            onSortChange={handleSortChange}
+            onSearch={handleSearch}
+          />
         </motion.div>
 
         {isLoading && (
@@ -117,22 +123,16 @@ export default function Home() {
           </motion.div>
         ) : null}
 
-        {data && !isLoading && (
+        {allPosts.length > 0 && !isLoading && (
           <PostList
-            posts={data.items}
-            pagination={{
-              page: data.page,
-              pageSize: data.pageSize,
-              totalPages: data.totalPages,
-              totalCount: data.totalCount,
-              hasPreviousPage: data.hasPreviousPage,
-              hasNextPage: data.hasNextPage,
-            }}
-            onPageChange={handlePageChange}
+            posts={allPosts}
+            hasNextPage={hasNextPage ?? false}
+            isFetchingNextPage={isFetchingNextPage}
+            onLoadMore={handleLoadMore}
           />
         )}
 
-        {data && data.items.length === 0 && !isLoading && (
+        {allPosts.length === 0 && !isLoading && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}

@@ -3,6 +3,7 @@ using Project.Data;
 using Project.Repositories;
 using Project.Services;
 using Project.Validators;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using System.Text.Json.Serialization;
 
@@ -38,15 +39,18 @@ builder.Services.AddScoped<IPostRepository, PostRepository>();
 
 // Services
 builder.Services.AddScoped<IPostService, PostService>();
+builder.Services.AddHttpClient();
+
+// Image Upload Service - Using Cloudinary
+builder.Services.AddScoped<IImageUploadService, CloudinaryService>();
 
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(Program));
 
 // FluentValidation
-builder.Services.AddFluentValidation(fv =>
-{
-    fv.RegisterValidatorsFromAssemblyContaining<CreatePostDtoValidator>();
-});
+builder.Services.AddValidatorsFromAssemblyContaining<CreatePostDtoValidator>();
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
 
 // CORS
 var allowedOrigins = new List<string>();

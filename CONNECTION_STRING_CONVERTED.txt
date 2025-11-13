@@ -1,0 +1,32 @@
+# Connection String - Format .NET
+
+## Connection String từ NeonDB (URL format):
+postgresql://neondb_owner:npg_6uzpMC4EhqNL@ep-misty-butterfly-afcmuvpm-pooler.c-2.us-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+
+## Connection String cho .NET (Copy cái này vào Render):
+
+Host=ep-misty-butterfly-afcmuvpm-pooler.c-2.us-west-2.aws.neon.tech;Database=neondb;Username=neondb_owner;Password=npg_6uzpMC4EhqNL;Port=5432;SslMode=Require;
+
+---
+
+## Chi tiết Parse:
+
+- Host: ep-misty-butterfly-afcmuvpm-pooler.c-2.us-west-2.aws.neon.tech
+- Database: neondb
+- Username: neondb_owner
+- Password: npg_6uzpMC4EhqNL
+- Port: 5432 (default PostgreSQL)
+- SslMode: Require
+
+---
+
+## Cách Sử Dụng:
+
+1. Copy connection string ở trên (format .NET)
+2. Vào Render Dashboard → Service → Environment Variables
+3. Tìm hoặc tạo: ConnectionStrings__DefaultConnection
+4. Paste connection string đã convert
+5. Save Changes
+6. Render sẽ tự động redeploy
+
+

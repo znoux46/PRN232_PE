@@ -1,0 +1,36 @@
+==========================================
+DANH SÁCH BIẾN MÔI TRƯỜNG CHO RENDER
+==========================================
+
+Copy và paste các biến này vào Render Dashboard → Environment Variables:
+
+1. ASPNETCORE_ENVIRONMENT
+   Value: Production
+
+2. ConnectionStrings__DefaultConnection
+   Value: [Paste connection string từ NeonDB]
+   Ví dụ: Host=ep-xxx-xxx.region.aws.neon.tech;Database=postmanagementdb;Username=username;Password=password;SslMode=Require
+
+3. Cloudinary__CloudName
+   Value: [Cloud name từ Cloudinary dashboard]
+   Ví dụ: dvk2b9nun
+
+4. Cloudinary__ApiKey
+   Value: [API Key từ Cloudinary dashboard]
+   Ví dụ: 144273327795377
+
+5. Cloudinary__ApiSecret
+   Value: [API Secret từ Cloudinary dashboard]
+   Ví dụ: JuVeQWDAwXTPWKxvLE6IqyNgPtI
+
+6. Cors__AllowedOrigins__0
+   Value: [URL frontend sau khi deploy]
+   Ví dụ: https://your-frontend.vercel.app
+
+==========================================
+LƯU Ý:
+- Sử dụng double underscore (__) giữa các cấp
+- Không có khoảng trắng thừa
+- Sau khi thêm xong, click Save Changes và redeploy
+==========================================
+
