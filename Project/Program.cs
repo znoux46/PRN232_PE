@@ -49,12 +49,46 @@ builder.Services.AddFluentValidation(fv =>
 });
 
 // CORS
-var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? new[] { "http://localhost:3000" };
+var allowedOrigins = new List<string>();
+
+// Read from configuration (appsettings.json)
+var configOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+if (configOrigins != null)
+{
+    allowedOrigins.AddRange(configOrigins);
+}
+
+// Read from environment variables (for production deployment)
+// Format: Cors__AllowedOrigins__0, Cors__AllowedOrigins__1, etc.
+var envIndex = 0;
+while (true)
+{
+    var envOrigin = builder.Configuration[$"Cors:AllowedOrigins:{envIndex}"];
+    if (string.IsNullOrEmpty(envOrigin))
+    {
+        // Also check alternative format: Cors__AllowedOrigins__0
+        envOrigin = builder.Configuration[$"Cors__AllowedOrigins__{envIndex}"];
+        if (string.IsNullOrEmpty(envOrigin))
+            break;
+    }
+    if (!allowedOrigins.Contains(envOrigin))
+    {
+        allowedOrigins.Add(envOrigin);
+    }
+    envIndex++;
+}
+
+// Default to localhost if no origins configured
+if (allowedOrigins.Count == 0)
+{
+    allowedOrigins.Add("http://localhost:3000");
+}
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins(allowedOrigins)
+        policy.WithOrigins(allowedOrigins.ToArray())
               .AllowAnyMethod()
               .AllowAnyHeader()
               .AllowCredentials();
@@ -64,14 +98,12 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// Enable Swagger for both Development and Production
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Post Management API v1");
-    });
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Post Management API v1");
+});
 
 // Only use HTTPS redirection in production
 if (!app.Environment.IsDevelopment())
