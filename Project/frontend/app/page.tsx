@@ -89,7 +89,7 @@ export default function Home() {
           </motion.div>
         )}
 
-        {error && (
+        {error ? (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -115,7 +115,7 @@ export default function Home() {
               </div>
             </div>
           </motion.div>
-        )}
+        ) : null}
 
         {data && !isLoading && (
           <PostList
