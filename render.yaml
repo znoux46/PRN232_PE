@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: post-management-api
+    runtime: dotnet
+    plan: free
+    buildCommand: dotnet publish -c Release -o ./publish
+    startCommand: dotnet ./publish/Project.dll
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__DefaultConnection
+        sync: false  # Will be set manually in Render dashboard
+      - key: Cors__AllowedOrigins__0
+        sync: false  # Will be set manually after frontend deploy
+
