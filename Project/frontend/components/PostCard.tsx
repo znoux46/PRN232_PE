@@ -75,19 +75,21 @@ export default function PostCard({ post, index = 0 }: PostCardProps) {
 
             {/* Image */}
             {post.imageUrl && (
-              <div className="relative w-full rounded-2xl overflow-hidden mb-3 border border-gray-200">
-                <div className="relative w-full aspect-video bg-gradient-to-br from-gray-100 to-gray-200">
-                  <Image
-                    src={post.imageUrl}
-                    alt={post.name}
-                    fill
-                    className="object-cover"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none'
-                    }}
-                  />
+              <Link href={`/posts/${post.id}`}>
+                <div className="relative w-full rounded-2xl overflow-hidden mb-3 border border-gray-200 cursor-pointer hover:border-primary-300 transition-colors group">
+                  <div className="relative w-full aspect-video bg-gradient-to-br from-gray-100 to-gray-200">
+                    <Image
+                      src={post.imageUrl}
+                      alt={post.name}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none'
+                      }}
+                    />
+                  </div>
                 </div>
-              </div>
+              </Link>
             )}
 
             {/* Actions */}
